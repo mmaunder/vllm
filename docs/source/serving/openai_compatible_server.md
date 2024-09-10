@@ -157,7 +157,7 @@ vLLM will use guided decoding to ensure the response matches the tool parameter 
 To enable this feature, you should set the following flags:
 * `--enable-auto-tool-choice` -- **mandatory** Auto tool choice. tells vLLM that you want to enable the model to generate its own tool calls when it 
 deems appropriate.
-* `--tool-call-parser` -- select the tool parser to use - currently either `hermes` or `mistral`. Additional tool parsers 
+* `--tool-call-parser` -- select the tool parser to use - currently either `hermes`, `mistral` or `llama31`. Additional tool parsers 
 will continue to be added in the future.
 * `--chat-template` -- **optional** for auto tool choice. the path to the chat template which handles `tool`-role messages and `assistant`-role messages 
 that contain previously generated tool calls. Hermes and Mistral models have tool-compatible chat templates in their 
@@ -197,3 +197,11 @@ when tools are provided, that results in much better reliability when working wi
 
 
 Recommended flags: `--tool-call-parser mistral --chat-template examples/tool_chat_template_mistral_parallel.jinja`
+
+
+#### Llama 3.1 Models
+All Llama 3.1 Instruct models should be supported including 8B, 70B and 405B, and quantizations of these models.
+
+Recommended flags: `--tool-call-parser llama31 --chat-template examples/tool_chat_template_llama_31.jinja`
+
+

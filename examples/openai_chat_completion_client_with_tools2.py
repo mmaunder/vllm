@@ -71,89 +71,48 @@ messages = [{
     "role": "assistant",
     "content": "I'm doing well! How can I help you?"
 }, {
-    "role":
-    "user",
-    "content":
-    "Can you tell me what the temperature will be in Dallas, in fahrenheit?"
+    "role": "user",
+    "content": "Can you tell me what the temperature will be in Dallas, in fahrenheit?"
 }]
 
 chat_completion = client.chat.completions.create(messages=messages,
                                                  model=model,
-                                                 tools=tools)
+                                                 tools=tools,
+                                                 stream=False)
 
 print("Chat completion results:")
 print(chat_completion)
 print("\n\n")
 
-tool_calls_stream = client.chat.completions.create(messages=messages,
-                                                   model=model,
-                                                   tools=tools,
-                                                   stream=True)
 
-chunks = []
-for chunk in tool_calls_stream:
-    chunks.append(chunk)
-    if chunk.choices[0].delta.tool_calls:
-        print(chunk.choices[0].delta.tool_calls[0])
-    else:
-        print(chunk.choices[0].delta)
-
-arguments = []
-tool_call_idx = -1
-for chunk in chunks:
-
-    if chunk.choices[0].delta.tool_calls:
-        tool_call = chunk.choices[0].delta.tool_calls[0]
-
-        if tool_call.index != tool_call_idx:
-            if tool_call_idx >= 0:
-                print(
-                    f"streamed tool call arguments: {arguments[tool_call_idx]}"
-                )
-            tool_call_idx = chunk.choices[0].delta.tool_calls[0].index
-            arguments.append("")
-        if tool_call.id:
-            print(f"streamed tool call id: {tool_call.id} ")
-
-        if tool_call.function:
-            if tool_call.function.name:
-                print(f"streamed tool call name: {tool_call.function.name}")
-
-            if tool_call.function.arguments:
-                arguments[tool_call_idx] += tool_call.function.arguments
-
-if len(arguments):
-    print(f"streamed tool call arguments: {arguments[-1]}")
-
-print("\n\n")
 
 messages.append({
     "role": "assistant",
     "tool_calls": chat_completion.choices[0].message.tool_calls
 })
 
+print("MESSAGES:", messages)
 
 # Now, simulate a tool call
 def get_current_weather(city: str, state: str, unit: 'str'):
     return ("The weather in Dallas, Texas is 85 degrees fahrenheit. It is "
             "partly cloudly, with highs in the 90's.")
 
-
 available_tools = {"get_current_weather": get_current_weather}
-
 completion_tool_calls = chat_completion.choices[0].message.tool_calls
+
 for call in completion_tool_calls:
     tool_to_call = available_tools[call.function.name]
     args = json.loads(call.function.arguments)
     result = tool_to_call(**args)
-    print(result)
+    print("Called ", call.function.name, " with result ", result)
     messages.append({
         "role": "tool",
         "content": result,
         "tool_call_id": call.id,
         "name": call.function.name
     })
-
+print("MESSAGES:", messages)
 chat_completion_2 = client.chat.completions.create(messages=messages,
                                                    model=model,
                                                    tools=tools,

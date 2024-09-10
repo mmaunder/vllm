@@ -33,7 +33,16 @@ CONFIGS: Dict[str, ServerConfig] = {
             str(VLLM_PATH / "examples/tool_chat_template_mistral.jinja"),
             "--ignore-patterns=\"consolidated.safetensors\""
         ]
+    },
+    "llama31": {
+        "model":
+        "neuralmagic/Meta-Llama-3.1-8B-Instruct-FP8",
+        "arguments": [
+            "--tool-call-parser", "llama31", "--chat-template",
+            str(VLLM_PATH / "examples/tool_chat_template_llama_31.jinja")
+        ]
     }
+
 }
 
 WEATHER_TOOL: ChatCompletionToolParam = {
