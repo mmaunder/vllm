@@ -67,6 +67,7 @@ class OpenAIServingChat(OpenAIServing):
 
         self.response_role = response_role
         self.use_tool_use_model_template = False
+        print("##############MDM chat_template: ", chat_template)
         self.chat_template = load_chat_template(chat_template)
 
         # set up tool use

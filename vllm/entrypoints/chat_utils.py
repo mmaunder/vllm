@@ -499,4 +499,20 @@ def apply_chat_template(
         tokenize=tokenize,
         **kwargs,
     )
+    import datetime
+    # Get the current time
+    current_time = datetime.datetime.now()
+
+    # Format the time as milliseconds without the decimal point
+    filename = current_time.strftime("%Y%m%d%H%M%S%f")[:-3] + ".txt"
+
+    # Specify the directory path
+    directory = "/home/ubuntu/northtex1/prompt_logging/"
+
+    # Create the full file path
+    file_path = directory + filename
+
+    # Write the prompt to the file
+    with open(file_path, "w") as file:
+        file.write(prompt)
     return prompt
